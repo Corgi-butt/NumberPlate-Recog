@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="numberplate.css">
+</head>
+<body>
+
+<!-- ファイル選択 -->
+    <input id="inputUploadFile" type="file" accept="image/*">
+
+<!-- アップロードボタン -->
+    <button id="buttonUploadObject">物体検知</button>
+
+    <button id="buttonUploadLabel">画像認識</button>
+
+    <button id="buttonUploadText">文字認識</button>
+
+<!-- アップロード画像の表示場所 -->
+    <div id="divImage">ここに画像が表示される</div>
+
+<!-- 認識結果の表示場所 -->
+    <textarea id="textDetectResult"></textarea>
+
+<!-- SDKの読み込み -->
+    <script src="https://apis.google.com/js/client.js"></script>
+
+<!-- プログラムの読み込み -->
+    <script src="numberplate.js"></script>
+</body>
+</html>
