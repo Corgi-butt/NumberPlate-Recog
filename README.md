@@ -2,4 +2,4 @@
 This is Number Plate Recognation as my project for graduation.
 
 If you want to use my project,you can do it by click under the URL.<br>
-https://corgi-butt.github.io/NumberPlate-Recog/numberplate.html
+<a>https://corgi-butt.github.io/NumberPlate-Recog/numberplate.html</a>
