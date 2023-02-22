@@ -34,7 +34,7 @@ const uploadBucket = 'number_plate_system';
  */
 
 // アップロードボタンクリック時の処理
-function onButtonUploadObjectClick(){
+function onButtonUploadClick(){
 	console.log('アップロードボタンクリック時の処理');
 
 	// ファイル情報の取得
@@ -63,9 +63,7 @@ function onButtonUploadObjectClick(){
 						source: {gcsImageUri: "gs://" + data.bucket + "/" + data.name} // オブジェクトストレージ上の場所
 					},
 					features: [
-						{
-							type: "OBJECT_LOCALIZATION"
-						}// 解析形式(画像内の複数物体を検出)
+						{type: "OBJECT_LOCALIZATION"} // 解析形式(画像内の複数物体を検出)
 					]
 				}
 			]
@@ -138,121 +136,17 @@ function onButtonUploadObjectClick(){
 	});
 }
 
-function onButtonUploadLabelClick(){
-	console.log('アップロードボタンクリック時の処理');
-
-	const file = inputUploadFile.files[0];
-
-	//ラベル認識
-	uploadFileToGcs(uploadBucket,file)
-	.then(response =>{
-		console.log('file uploaded');
-		console.log(response);
-
-		const data = response.result;
-
-		divImage.innerHTML = '<img src="'+data.mediaLink+'" width = "100%">';
-
-		textDetectResult.value = '';
-
-		return gapi.client.vision.images.annotate({
-			requests:[
-				{
-					image:{
-						source:{gcsImageUri:"gs://"+ data.bucket +"/"+ data.name}
-					},
-					features:[
-						{
-							type:"LABEL_DETECTION",
-							maxResults: 5
-						}
-					]
-				}
-			]
-		});
-	})
-	.then(response =>{
-		console.log('画像解析完了');
-		console.log(response);
-
-		const data = response.result.responses[0];
-
-    divImage.style.position = 'relative';
-
-		for(let i=0; i<data.labelAnnotations.length; i++){
-			const label = data.labelAnnotations[i];
-
-			textDetectResult.value+='['+label.score*100+'%]'+label.description + "\r\n";
-		}
-	});
-}
-
-function onButtonUploadTextClick(){
-  console.log('アップロードボタンクリック時の処理');
-
-	const file = inputUploadFile.files[0];
-
-	//文字認識
-	uploadFileToGcs(uploadBucket,file)
-	.then(response =>{
-		console.log('file uploaded');
-		console.log(response);
-
-		const data = response.result;
-
-		divImage.innerHTML = '<img src="'+data.mediaLink+'" width = "100%">';
-
-		textDetectResult.value = '';
-
-		return gapi.client.vision.images.annotate({
-			requests:[
-				{
-					image:{
-						source:{gcsImageUri:"gs://"+ data.bucket +"/"+ data.name}
-					},
-					features:[
-						{
-							type:"Text_DETECTION",
-							maxResults: 5
-						}
-					]
-				}
-			]
-		});
-	})
-	.then(response =>{
-		console.log('画像解析完了');
-		console.log(response);
-
-		const data = response.result.responses[0];
-
-    divImage.style.position = 'relative';
-
-		for(let i=0; i<data.textAnnotations.length; i++){
-			const label = data.textAnnotations[i];
-
-			textDetectResult.value+=label.description + "\r\n";
-		}
-	});
-}
 // ==================================================
 
 /**
- * HTMLパーツをJavaScriptで利用するためのgapi.load('client', () =>{
-	gapi.client.init({
-		'apiKey': apiKey, // APIキー
-		'discoveryDocs': discoveries, // Discovery Documentの指定
-	});
-});定義
+ * HTMLパーツをJavaScriptで利用するための定義
  */
 
 // ファイル選択
 const inputUploadFile = document.getElementById('inputUploadFile');
 
 // アップロードボタン
-const buttonUploadObject = document.getElementById('buttonUploadObject');
-const buttonUploadLabel = document.getElementById('buttonUploadLabel');
-const buttonUploadText = document.getElementById('buttonUploadText');
+const buttonUpload = document.getElementById('buttonUpload');
 
 // アップロード画像の表示場所
 const divImage = document.getElementById('divImage');
@@ -267,15 +161,8 @@ const textDetectResult = document.getElementById('textDetectResult');
  * HTMLパーツのイベント発生時の処理を登録
  */
 
-//物体検知
-buttonUploadObject.addEventListener('click', onButtonUploadObjectClick);
-//画像認識
-buttonUploadLabel.addEventListener('click',onButtonUploadLabelClick);
-//文字認識
-buttonUploadText.addEventListener('click',onButtonUploadTextClick);
-
-
-
+// アップロードボタンのクリック
+buttonUpload.addEventListener('click', onButtonUploadClick);
 
 // ==================================================
 
@@ -283,7 +170,12 @@ buttonUploadText.addEventListener('click',onButtonUploadTextClick);
  * GCP Client Libraryの初期設定
  */
 
-
+gapi.load('client', () =>{
+	gapi.client.init({
+		'apiKey': apiKey, // APIキー
+		'discoveryDocs': discoveries, // Discovery Documentの指定
+	});
+});
 
 // ==================================================
 
